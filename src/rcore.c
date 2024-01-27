@@ -223,10 +223,12 @@
     #if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
         #include <sys/time.h>               // Required for: timespec, nanosleep(), select() - POSIX
 
-        //#define GLFW_EXPOSE_NATIVE_X11      // WARNING: Exposing Xlib.h > X.h results in dup symbols for Font type
+        #define GLFW_EXPOSE_NATIVE_X11      // WARNING: Exposing Xlib.h > X.h results in dup symbols for Font type
         //#define GLFW_EXPOSE_NATIVE_WAYLAND
         //#define GLFW_EXPOSE_NATIVE_MIR
+        #define Font X11Font
         #include "GLFW/glfw3native.h"       // Required for: glfwGetX11Window()
+        #undef Font
     #endif
     #if defined(__APPLE__)
         #include <unistd.h>                 // Required for: usleep()
@@ -1885,7 +1887,7 @@ void *GetWindowHandle(void)
     // typedef XID Window;
     //unsigned long id = (unsigned long)glfwGetX11Window(CORE.Window.handle);
     //return NULL;    // TODO: Find a way to return value... cast to void *?
-    return (void *)CORE.Window.handle;
+    return (void *)(unsigned long)glfwGetX11Window(CORE.Window.handle);
 #endif
 #if defined(__APPLE__)
     // NOTE: Returned handle is: (objc_object *)
